@@ -32,17 +32,16 @@ namespace Breadboard
             DialogResult result = fileDialog.ShowDialog();
             string[] fileNames = fileDialog.FileNames;
 
-            /// MessageBox.Show("Thanks!");
             System.Diagnostics.Trace.WriteLine(fileNames[0]);
 
             if (result == DialogResult.OK)
             {
-                loadFiles(fileNames);
+                loadAndWrite(fileNames, "Q:\\roop\\crunls\\Snippets");
             }
         }
 
 
-        public void loadFiles(string[] fileNames)
+        public void loadAndWrite(string[] fileNames, string destination)
         /// Load Runlog files
         {
             foreach (string fileName in fileNames)
@@ -50,9 +49,8 @@ namespace Breadboard
                 try
                 {
                     RunLog rlg = Common.loadBinaryObjectFromFile(fileName) as RunLog;
-                    System.Diagnostics.Trace.WriteLine(rlg.RunTime);
-
-                    writeRunLogVariablesToFile(rlg, "poo", "Q:\\roop\\crunls\\Snippets");
+                    Console.WriteLine(rlg.RunTime);
+                    writeVariablesToFile(rlg, destination);
                 }
                 catch (Exception ex)
                 {
@@ -61,31 +59,42 @@ namespace Breadboard
             }
         }
 
-        public bool writeRunLogVariablesToFile(RunLog rlg, string filename, string path)
+        public bool writeVariablesToFile(RunLog rlg, string path)
         /// write Variable List to File
         {
-            bool writeSuccess = true;
-            string varFileDirectory = path;
-            string varFileExt = ".txt";
-            string varFullFileName = varFileDirectory + "\\" + filename + varFileExt;
 
-            if (path == "" || filename == "")
+            DateTime runEndTime = rlg.RunTime.AddSeconds(rlg.RunSequence.SequenceDuration);
+            string filename = runEndTime.ToString("yyyy-MM-dd");
+            string varFullFileName = path + "\\" + filename + ".txt";
+
+            if (path == "")
             {
                 return false;
             }
 
-
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(varFullFileName))
+            try
             {
-                file.WriteLine(DateTime.Now);
-                foreach (Variable var in rlg.RunSequence.Variables)
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(varFullFileName))
                 {
-                    file.WriteLine(var.VariableName + ' ' + Convert.ToString(var.VariableValue));
+                    file.Write(runEndTime.ToString("MM-dd-yyyy_HH_mm_ss\t"));
+                    file.Write("SequenceDuration" + ";"+ rlg.RunSequence.SequenceDuration + ",");
+                    file.Write("SequenceModeName" + ";" + rlg.RunSequence.CurrentMode.ModeName + ",");
+                    foreach (Variable var in rlg.RunSequence.Variables)
+                    {
+                        file.Write(var.VariableName + ';' + Convert.ToString(var.VariableValue) + ",");
+                    }
+                    file.WriteLine("");
+                    file.Close();
                 }
-                file.Close();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unable to open or read file " + filename+" due to exception: " + ex.Message + ex.StackTrace);
+                return false;
             }
 
-            return true;
 
         }
     }
