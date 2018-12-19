@@ -22,7 +22,7 @@ namespace Breadboard
     public partial class BreadboardMainForm : Form
     {
         public static Dictionary<string, string> BreadboardSettings = new Dictionary<string, string>();
-
+        public static FileSystemWatcher watcher = new FileSystemWatcher();
         public BreadboardMainForm()
         {
             InitializeComponent();
@@ -55,18 +55,26 @@ namespace Breadboard
         // Define the event handlers.
         private void OnCreated(object source, FileSystemEventArgs e)
         {
-            // Specify what is done when a file is changed, created, or deleted.
-            Debug.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
-            RunLog rlg = Common.loadBinaryObjectFromFile(e.FullPath) as RunLog;
-            if (BreadboardSettings.ContainsKey("SnippetFolder"))
+            while (IsFileLocked(e.FullPath)) { }
+            Debug.WriteLine("File is probably unlocked");
+            
+            if (!IsFileLocked(e.FullPath))
             {
-                string destination = BreadboardSettings["SnippetFolder"];
-                writeVariablesToFile(rlg, destination);
+                Debug.WriteLine("File is defo unlocked");
+                // Specify what is done when a file is changed, created, or deleted.
+                Debug.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
+                RunLog rlg = Common.loadBinaryObjectFromFile(e.FullPath) as RunLog;
+                if (BreadboardSettings.ContainsKey("SnippetFolder"))
+                {
+                    string destination = BreadboardSettings["SnippetFolder"];
+                    writeVariablesToFile(rlg, destination);
+                }
+                else
+                {
+                    MessageBox.Show("Please enter a Snippet Folder");
+                }
             }
-            else
-            {
-                MessageBox.Show("Please enter a Snippet Folder");
-            }
+
         }
 
         // Manually read runlogs
@@ -238,16 +246,7 @@ namespace Breadboard
                 label5.Visible = false;
                 label4.Visible = true;
                 // Create a new FileSystemWatcher and set its properties.
-                FileSystemWatcher watcher = new FileSystemWatcher();
                 watcher.Path = BreadboardSettings["RunLogFolder"];
-                if (BreadboardSettings.ContainsKey("RunLogFolder"))
-                {
-                    watcher.Path = BreadboardSettings["RunLogFolder"];
-                }
-                else
-                {
-                    MessageBox.Show("Please enter a Runlog Folder");
-                }
                 /* Watch for changes in LastAccess and LastWrite times, and
                    the renaming of files or directories. */
                 watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
@@ -267,6 +266,33 @@ namespace Breadboard
             }
             
 
+        }
+
+        // Check if runfile is locked
+        private bool IsFileLocked(string fileName)
+        {
+            FileStream stream = null;
+            FileInfo file = new FileInfo(fileName);
+            try
+            {
+                stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException)
+            {
+                //the file is unavailable because it is:
+                //still being written to
+                //or being processed by another thread
+                //or does not exist (has already been processed)
+                return true;
+            }
+            finally
+            {
+                if (stream != null)
+                    stream.Close();
+            }
+
+            //file is not locked
+            return false;
         }
     }
 }
