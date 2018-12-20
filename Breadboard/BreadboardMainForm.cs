@@ -90,11 +90,11 @@ namespace Breadboard
             DialogResult result = fileDialog.ShowDialog();
             string[] fileNames = fileDialog.FileNames;
 
-            System.Diagnostics.Trace.WriteLine(fileNames[0]);
 
             if (result == DialogResult.OK)
             {
                 loadAndWrite(fileNames, "Q:\\roop\\crunls\\Snippets");
+                System.Diagnostics.Trace.WriteLine(fileNames[0]);
             }
         }
 
@@ -197,6 +197,8 @@ namespace Breadboard
         private void button3_Click(object sender, EventArgs e)
         {
             string fileName = "./BreadboardSettings.set";
+            BreadboardSettings["SnippetFolder"] = textBox1.Text;
+            BreadboardSettings["RunLogFolder"] = textBox2.Text;
             WriteDictionary(BreadboardSettings, fileName);
 
             MessageBox.Show("Settings saved as 'BreadboardSettings.set'.");
