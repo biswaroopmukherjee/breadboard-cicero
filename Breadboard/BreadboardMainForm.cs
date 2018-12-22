@@ -28,7 +28,7 @@ namespace Breadboard
             InitializeComponent();
 
             string settingsFileName = "./BreadboardSettings.set";
-            
+            //addEventLogText("Settings loaded");
             if (File.Exists(settingsFileName))
             {
                 BreadboardSettings = ReadDictionary(settingsFileName);
@@ -55,9 +55,10 @@ namespace Breadboard
         // Define the event handlers.
         private void OnCreated(object source, FileSystemEventArgs e)
         {
-            while (IsFileLocked(e.FullPath)) { }
+            addEventLogText("Reading file... ");
+            while (IsFileLocked(e.FullPath)) { }// Do nothing while file is being written by cicero
             Debug.WriteLine("File is probably unlocked");
-            
+            // If the file is ready to read,
             if (!IsFileLocked(e.FullPath))
             {
                 Debug.WriteLine("File is defo unlocked");
@@ -96,6 +97,10 @@ namespace Breadboard
                 loadAndWrite(fileNames, "Q:\\roop\\crunls\\Snippets");
                 System.Diagnostics.Trace.WriteLine(fileNames[0]);
             }
+            else
+            {
+                addEventLogText("No runlogs were selected");
+            }
         }
 
         // load files from filenames, and write snippets to destination
@@ -132,7 +137,7 @@ namespace Breadboard
                 return false;
             }
 
-            try
+            try //writing to file
             {
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(varFullFileName, append:true))
                 {
@@ -148,10 +153,12 @@ namespace Breadboard
                     file.Close();
                 }
 
+                addEventLogText("New snippet: " + runEndTime.ToString("MM-dd-yyyy_HH_mm_ss\t"));
                 return true;
             }
             catch (Exception ex)
             {
+                addEventLogText("ERROR:" + "Unable to open or read file " + filename + " due to exception: " + ex.Message + ex.StackTrace);
                 Debug.WriteLine("Unable to open or read file " + filename+" due to exception: " + ex.Message + ex.StackTrace);
                 return false;
             }
@@ -161,7 +168,7 @@ namespace Breadboard
 
         private void BreadboardMainForm_Load(object sender, EventArgs e)
         {
-
+            addEventLogText("Welcome to Breadboard.");
         }
 
         private void rlgfolder_Click(object sender, EventArgs e)
@@ -200,7 +207,7 @@ namespace Breadboard
             BreadboardSettings["SnippetFolder"] = textBox1.Text;
             BreadboardSettings["RunLogFolder"] = textBox2.Text;
             WriteDictionary(BreadboardSettings, fileName);
-
+            addEventLogText("Settings saved.");
             MessageBox.Show("Settings saved as 'BreadboardSettings.set'.");
         }
 
@@ -243,8 +250,10 @@ namespace Breadboard
         private void button4_Click(object sender, EventArgs e)
         {
             
-            if (BreadboardSettings.ContainsKey("RunLogFolder") && BreadboardSettings.ContainsKey("SnippetFolder"))
+            if (BreadboardSettings.ContainsKey("RunLogFolder") && BreadboardSettings.ContainsKey("SnippetFolder") && Directory.Exists(BreadboardSettings["RunLogFolder"]) && Directory.Exists(BreadboardSettings["SnippetFolder"]))
             {
+                
+                addEventLogText("Starting up");
                 label5.Visible = false;
                 label4.Visible = true;
                 // Create a new FileSystemWatcher and set its properties.
@@ -261,10 +270,12 @@ namespace Breadboard
 
                 // Begin watching.
                 watcher.EnableRaisingEvents = true;
+                addEventLogText("Running");
             }
             else
             {
                 MessageBox.Show("Check your folders!");
+                addEventLogText("ERROR: folders invalid.");
             }
             
 
@@ -296,5 +307,17 @@ namespace Breadboard
             //file is not locked
             return false;
         }
+
+
+        // Add message to eventlog
+        public void addEventLogText(string messagetext)
+        {
+            eventLogTextBox.Invoke((Action)delegate
+            {
+                eventLogTextBox.AppendText(DateTime.Now.ToString() + " " + messagetext + "\r\n"); ;
+            });
+        }
+
+
     }
 }
