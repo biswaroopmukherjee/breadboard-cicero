@@ -1,4 +1,7 @@
 using System;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +15,7 @@ using System.Security.Permissions;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json.Linq;
 using DataStructures;
 
 
@@ -21,12 +25,20 @@ namespace Breadboard
 
     public partial class BreadboardMainForm : Form
     {
+        public static HttpClient client = new HttpClient();
         public static Dictionary<string, string> BreadboardSettings = new Dictionary<string, string>();
         public static FileSystemWatcher watcher = new FileSystemWatcher();
+        public static Dictionary<string, int> LabURLs = new Dictionary<string, int>()
+        {
+            {"bec1", 1 },
+            {"fermi1", 2 },
+            {"fermi2", 3 },
+            {"fermi3", 4 },
+        };
+
         public BreadboardMainForm()
         {
             InitializeComponent();
-
             string settingsFileName = "./BreadboardSettings.set";
             //addEventLogText("Settings loaded");
             if (File.Exists(settingsFileName))
@@ -40,6 +52,14 @@ namespace Breadboard
                 {
                     textBox2.Text = BreadboardSettings["RunLogFolder"];
                 }
+                if (BreadboardSettings.ContainsKey("LabName"))
+                {
+                    comboBox1.Text = BreadboardSettings["LabName"];
+                }
+                if (BreadboardSettings.ContainsKey("APIToken"))
+                {
+                    textBox3.Text = BreadboardSettings["APIToken"];
+                }
                 //MessageBox.Show("Settings were loaded from the file 'BreadboardSettings.set' in the directory with the Breadboard executable.");
             }
             else
@@ -47,10 +67,27 @@ namespace Breadboard
                 MessageBox.Show("Settings were not automatically loaded. Save new settings to enable automatic loading of settings.");
             }
 
+            // Set up the HTTP Client
+            client.BaseAddress = new Uri("http://breadboard-215702.appspot.com");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+            if (BreadboardSettings.ContainsKey("APIToken"))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Token", BreadboardSettings["APIToken"]);
+            }
+            else
+            {
+                //addEventLogText("API client not set up. Please enter an API token and save the settings.");
+            }
 
 
 
         }
+
+        
+
 
         // Define the event handlers.
         private void OnCreated(object source, FileSystemEventArgs e)
@@ -68,6 +105,7 @@ namespace Breadboard
                 if (BreadboardSettings.ContainsKey("SnippetFolder"))
                 {
                     string destination = BreadboardSettings["SnippetFolder"];
+                    writeVariablesToAPI(rlg);
                     writeVariablesToFile(rlg, destination);
                 }
                 else
@@ -112,6 +150,7 @@ namespace Breadboard
                 try
                 {
                     RunLog rlg = Common.loadBinaryObjectFromFile(fileName) as RunLog;
+                    writeVariablesToAPI(rlg);
                     Debug.WriteLine(rlg.RunTime);
                     writeVariablesToFile(rlg, destination);
                 }
@@ -139,10 +178,10 @@ namespace Breadboard
 
             try //writing to file
             {
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(varFullFileName, append:true))
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(varFullFileName, append: true))
                 {
                     file.Write(runEndTime.ToString("MM-dd-yyyy_HH_mm_ss\t"));
-                    file.Write("SequenceDuration" + ";"+ rlg.RunSequence.SequenceDuration + ",");
+                    file.Write("SequenceDuration" + ";" + rlg.RunSequence.SequenceDuration + ",");
                     try { file.Write("SequenceModeName" + ";" + rlg.RunSequence.CurrentMode.ModeName + ","); }
                     catch { }
                     foreach (Variable var in rlg.RunSequence.Variables)
@@ -159,17 +198,55 @@ namespace Breadboard
             catch (Exception ex)
             {
                 addEventLogText("ERROR:" + "Unable to open or read file " + filename + " due to exception: " + ex.Message + ex.StackTrace);
-                Debug.WriteLine("Unable to open or read file " + filename+" due to exception: " + ex.Message + ex.StackTrace);
+                Debug.WriteLine("Unable to open or read file " + filename + " due to exception: " + ex.Message + ex.StackTrace);
                 return false;
             }
 
 
         }
 
-        private void BreadboardMainForm_Load(object sender, EventArgs e)
+        // Write Runlog to API
+        private async Task<bool> writeVariablesToAPI(RunLog rlg)
         {
-            addEventLogText("Welcome to Breadboard.");
+            DateTime runEndTime = rlg.RunTime.AddSeconds(rlg.RunSequence.SequenceDuration);
+            JArray listBoundVariables = new JArray();
+            JObject parametersJson = new JObject();
+            foreach (Variable var in rlg.RunSequence.Variables)
+            {
+                parametersJson[var.VariableName] = var.VariableValue;
+                if (var.ListDriven)
+                {
+                    listBoundVariables.Add(var.VariableName);
+                }
+            }
+            parametersJson["ListBoundVariables"] = listBoundVariables;
+            parametersJson["SequenceDuration"] = rlg.RunSequence.SequenceDuration;
+            parametersJson["SequenceModeName"] = rlg.RunSequence.CurrentMode.ModeName;
+            // create the new run
+            RunAPI newrun = new RunAPI()
+            {
+                runtime = runEndTime.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                parameters = parametersJson,
+                lab = LabURLs[BreadboardSettings["LabName"]]
+            };
+
+            try  // to create a run object in the API
+            {
+                var url = await CreateRunAsync(newrun);
+                addEventLogText($"Run created at {url.Segments[1]}{url.Segments[2]}");
+
+                return true;
+            }
+            catch (Exception x)
+            {
+                addEventLogText("API Error: " + x.Message);
+
+                return false;
+            }
+
+
         }
+
 
         private void rlgfolder_Click(object sender, EventArgs e)
         {
@@ -200,15 +277,50 @@ namespace Breadboard
             BreadboardSettings["SnippetFolder"] = textBox1.Text;
         }
 
+        private void comboBox1_TextChanged(object sender, EventArgs e)
+        {
+            BreadboardSettings["LabName"] = comboBox1.Text;
+        }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            BreadboardSettings["APIToken"] = textBox3.Text;
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Token", BreadboardSettings["APIToken"]);
+        }
+
+        // Save Settings Button
+        private async void button3_Click(object sender, EventArgs e)
         {
             string fileName = "./BreadboardSettings.set";
             BreadboardSettings["SnippetFolder"] = textBox1.Text;
             BreadboardSettings["RunLogFolder"] = textBox2.Text;
+            BreadboardSettings["LabName"] = comboBox1.Text;
+            BreadboardSettings["APIToken"] = textBox3.Text;
             WriteDictionary(BreadboardSettings, fileName);
             addEventLogText("Settings saved.");
             MessageBox.Show("Settings saved as 'BreadboardSettings.set'.");
+            if (BreadboardSettings.ContainsKey("APIToken"))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Token", BreadboardSettings["APIToken"]);
+            }
+            else
+            {
+                addEventLogText("API client not set up. Please enter an API token and save the settings.");
+            }
+            try
+            {
+                string path = "labs/"+ LabURLs[BreadboardSettings["LabName"]].ToString() +"/";
+                
+                Lab lab = await GetLabAsync(path);
+                addEventLogText("Hi " + lab.name+"!");
+
+            }
+            catch (Exception x)
+            {
+                addEventLogText("API Error: " +x.Message);
+            }
         }
 
         static void WriteDictionary(Dictionary<string, string> dictionary, string file)
@@ -271,6 +383,8 @@ namespace Breadboard
                 // Begin watching.
                 watcher.EnableRaisingEvents = true;
                 addEventLogText("Running");
+
+                
             }
             else
             {
@@ -308,9 +422,9 @@ namespace Breadboard
             return false;
         }
 
-
+        
         // Add message to eventlog
-        public void addEventLogText(string messagetext)
+        private void addEventLogText(string messagetext)
         {
             eventLogTextBox.Invoke((Action)delegate
             {
@@ -318,6 +432,90 @@ namespace Breadboard
             });
         }
 
+        // On form load:
+        private void BreadboardMainForm_Load(object sender, EventArgs e)
+        {
+            addEventLogText("Welcome to Breadboard.");
+        }
 
+
+        public class Lab
+        {
+            public int id { get; set; }
+            public string name { get; set; }
+        }
+
+        public class RunAPI
+        {
+            public string runtime { get; set; }
+            public JObject parameters { get; set;}
+            public int lab { get; set; }
+        }
+
+        // Post a Run
+        public static async Task<Uri> CreateRunAsync(RunAPI run)
+        {
+            HttpResponseMessage response = await client.PostAsJsonAsync(
+                "runs/", run);
+            response.EnsureSuccessStatusCode();
+
+            // return URI of created resource
+            return response.Headers.Location;
+        }
+
+        // Get a lab (useful for testing httpClient)
+        public static async Task<Lab> GetLabAsync(string path)
+        {
+            Lab lab = null;
+            HttpResponseMessage response = await client.GetAsync(path);
+            if (response.IsSuccessStatusCode)
+            {
+                lab = await response.Content.ReadAsAsync<Lab>();
+            }
+            return lab;
+        }
+
+
+
+        public static void ShowLab(Lab lab)
+        {
+            Console.WriteLine($"name: {lab.name}\n");
+        }
+
+
+        
+
+
+
+
+
+
+
+        // Random other stuff (not used):
+
+        private void eventLogTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }

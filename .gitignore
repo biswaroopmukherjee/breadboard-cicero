@@ -387,3 +387,6 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+# Breadboard specific stuff
+*.set
