@@ -43,7 +43,7 @@ namespace Breadboard
             //addEventLogText("Settings loaded");
             if (File.Exists(settingsFileName))
             {
-                BreadboardSettings = ReadDictionary(settingsFileName);
+                BreadboardSettings = DictIO.ReadDictionary(settingsFileName);
                 if (BreadboardSettings.ContainsKey("SnippetFolder"))
                 {
                     textBox1.Text = BreadboardSettings["SnippetFolder"];
@@ -297,7 +297,7 @@ namespace Breadboard
             BreadboardSettings["RunLogFolder"] = textBox2.Text;
             BreadboardSettings["LabName"] = comboBox1.Text;
             BreadboardSettings["APIToken"] = textBox3.Text;
-            WriteDictionary(BreadboardSettings, fileName);
+            DictIO.WriteDictionary(BreadboardSettings, fileName);
             addEventLogText("Settings saved.");
             MessageBox.Show("Settings saved as 'BreadboardSettings.set'.");
             if (BreadboardSettings.ContainsKey("APIToken"))
@@ -323,40 +323,7 @@ namespace Breadboard
             }
         }
 
-        static void WriteDictionary(Dictionary<string, string> dictionary, string file)
-        {
-            using (FileStream fs = File.OpenWrite(file))
-            using (BinaryWriter writer = new BinaryWriter(fs))
-            {
-                // Put count.
-                writer.Write(dictionary.Count);
-                // Write pairs.
-                foreach (var pair in dictionary)
-                {
-                    writer.Write(pair.Key);
-                    writer.Write(pair.Value);
-                }
-            }
-        }
 
-        static Dictionary<string, string> ReadDictionary(string file)
-        {
-            var result = new Dictionary<string, string>();
-            using (FileStream fs = File.OpenRead(file))
-            using (BinaryReader reader = new BinaryReader(fs))
-            {
-                // Get count.
-                int count = reader.ReadInt32();
-                // Read in all pairs.
-                for (int i = 0; i < count; i++)
-                {
-                    string key = reader.ReadString();
-                    string value = reader.ReadString();
-                    result[key] = value;
-                }
-            }
-            return result;
-        }
 
         // START button
         private void button4_Click(object sender, EventArgs e)
@@ -439,18 +406,7 @@ namespace Breadboard
         }
 
 
-        public class Lab
-        {
-            public int id { get; set; }
-            public string name { get; set; }
-        }
-
-        public class RunAPI
-        {
-            public string runtime { get; set; }
-            public JObject parameters { get; set;}
-            public int lab { get; set; }
-        }
+        
 
         // Post a Run
         public static async Task<Uri> CreateRunAsync(RunAPI run)
@@ -474,14 +430,7 @@ namespace Breadboard
             }
             return lab;
         }
-
-
-
-        public static void ShowLab(Lab lab)
-        {
-            Console.WriteLine($"name: {lab.name}\n");
-        }
-
+        
 
         
 

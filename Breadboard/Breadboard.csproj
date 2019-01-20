@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APIutils.cs" />
     <Compile Include="BreadboardMainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,6 +82,7 @@
       <DependentUpon>BreadboardMainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Breadboard.cs" />
+    <Compile Include="DictIO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="BreadboardMainForm.resx">
       <DependentUpon>BreadboardMainForm.cs</DependentUpon>
