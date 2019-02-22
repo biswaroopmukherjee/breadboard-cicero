@@ -12,19 +12,19 @@ Ask me for prebuilt binaries or clone the repo and build it yourself (see below)
 
 Run `breadboard.exe`. You'll see:
 
-[startup](docs/breadboard-cicero-1-empty.png)
+![startup](docs/breadboard-cicero-1-empty.png)
 
 Fill in the settings. For the API token and URL, ask me. We usually store the snippet files in the server. The runlog files are near your Cicero installation.
 
-[settings](docs/breadboard-cicero-2-settings.png)
+![settings](docs/breadboard-cicero-2-settings.png)
 
 Hit start. The program will watch the current runlog folder for updates.
 
-[start](docs/breadboard-cicero-3-start.png)
+![start](docs/breadboard-cicero-3-start.png)
 
 Every time Cicero runs a sequence, it writes a runlog, and breadboard-cicero writes a snippet file as well as a run object.
 
-[newrun](docs/breadboard-cicero-4-newrun.png)
+![newrun](docs/breadboard-cicero-4-newrun.png)
 ---
 ## How can I build it?
 
