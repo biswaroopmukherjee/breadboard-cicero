@@ -60,6 +60,10 @@ namespace Breadboard
                 {
                     textBox3.Text = BreadboardSettings["APIToken"];
                 }
+                if (BreadboardSettings.ContainsKey("APIURL"))
+                {
+                    textBox4.Text = BreadboardSettings["APIURL"];
+                }
                 //MessageBox.Show("Settings were loaded from the file 'BreadboardSettings.set' in the directory with the Breadboard executable.");
             }
             else
@@ -68,7 +72,14 @@ namespace Breadboard
             }
 
             // Set up the HTTP Client
-            client.BaseAddress = new Uri("http://breadboard-215702.appspot.com");
+            if (BreadboardSettings.ContainsKey("APIURL"))
+            {
+                client.BaseAddress = new Uri(BreadboardSettings["APIURL"]);
+            }
+            else
+            {
+                client.BaseAddress = new Uri("http://breadboard-215702.appspot.com");
+            }
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
@@ -289,6 +300,11 @@ namespace Breadboard
                 new AuthenticationHeaderValue("Token", BreadboardSettings["APIToken"]);
         }
 
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+            BreadboardSettings["APIURL"] = textBox4.Text;
+        }
+
         // Save Settings Button
         private async void button3_Click(object sender, EventArgs e)
         {
@@ -297,6 +313,7 @@ namespace Breadboard
             BreadboardSettings["RunLogFolder"] = textBox2.Text;
             BreadboardSettings["LabName"] = comboBox1.Text;
             BreadboardSettings["APIToken"] = textBox3.Text;
+            BreadboardSettings["APIURL"] = textBox4.Text;
             DictIO.WriteDictionary(BreadboardSettings, fileName);
             addEventLogText("Settings saved.");
             MessageBox.Show("Settings saved as 'BreadboardSettings.set'.");
@@ -307,7 +324,7 @@ namespace Breadboard
             }
             else
             {
-                addEventLogText("API client not set up. Please enter an API token and save the settings.");
+                addEventLogText("API client not set up. Please enter an API token and URL and save the settings.");
             }
             try
             {
@@ -463,6 +480,11 @@ namespace Breadboard
         }
 
         private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
         {
 
         }

@@ -47,11 +47,13 @@ namespace Breadboard
             this.eventLogTextBox = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.Run = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -72,7 +74,7 @@ namespace Breadboard
             // 
             // rlgFolderButton
             // 
-            this.rlgFolderButton.Location = new System.Drawing.Point(282, 3);
+            this.rlgFolderButton.Location = new System.Drawing.Point(281, 3);
             this.rlgFolderButton.Name = "rlgFolderButton";
             this.rlgFolderButton.Size = new System.Drawing.Size(58, 21);
             this.rlgFolderButton.TabIndex = 4;
@@ -82,7 +84,7 @@ namespace Breadboard
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(89, 33);
+            this.textBox1.Location = new System.Drawing.Point(88, 33);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(169, 20);
             this.textBox1.TabIndex = 5;
@@ -90,7 +92,7 @@ namespace Breadboard
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(89, 3);
+            this.textBox2.Location = new System.Drawing.Point(88, 3);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(169, 20);
             this.textBox2.TabIndex = 7;
@@ -98,7 +100,7 @@ namespace Breadboard
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(282, 33);
+            this.button2.Location = new System.Drawing.Point(281, 33);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(58, 21);
             this.button2.TabIndex = 6;
@@ -111,7 +113,7 @@ namespace Breadboard
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.82437F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 69.17563F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 64F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
             this.tableLayoutPanel1.Controls.Add(this.rlgFolderButton, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.button2, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.textBox1, 1, 1);
@@ -151,7 +153,7 @@ namespace Breadboard
             // 
             this.button3.Location = new System.Drawing.Point(355, 19);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(82, 115);
+            this.button3.Size = new System.Drawing.Size(82, 142);
             this.button3.TabIndex = 9;
             this.button3.Text = "Save Settings";
             this.button3.UseVisualStyleBackColor = true;
@@ -205,9 +207,9 @@ namespace Breadboard
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.eventLogTextBox);
-            this.groupBox1.Location = new System.Drawing.Point(11, 235);
+            this.groupBox1.Location = new System.Drawing.Point(12, 264);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(443, 214);
+            this.groupBox1.Size = new System.Drawing.Size(442, 225);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Event Log";
@@ -220,7 +222,7 @@ namespace Breadboard
             this.eventLogTextBox.Name = "eventLogTextBox";
             this.eventLogTextBox.ReadOnly = true;
             this.eventLogTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.eventLogTextBox.Size = new System.Drawing.Size(438, 189);
+            this.eventLogTextBox.Size = new System.Drawing.Size(438, 200);
             this.eventLogTextBox.TabIndex = 0;
             this.eventLogTextBox.TextChanged += new System.EventHandler(this.eventLogTextBox_TextChanged);
             // 
@@ -230,7 +232,7 @@ namespace Breadboard
             this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Location = new System.Drawing.Point(11, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(443, 138);
+            this.groupBox2.Size = new System.Drawing.Size(443, 169);
             this.groupBox2.TabIndex = 15;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Settings";
@@ -240,27 +242,20 @@ namespace Breadboard
             this.tableLayoutPanel2.ColumnCount = 2;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75F));
+            this.tableLayoutPanel2.Controls.Add(this.label8, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.label7, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.comboBox1, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.textBox3, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.label6, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.textBox4, 1, 2);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(5, 79);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowCount = 3;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(344, 55);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(344, 82);
             this.tableLayoutPanel2.TabIndex = 14;
-            // 
-            // label6
-            // 
-            this.label6.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(15, 7);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(56, 13);
-            this.label6.TabIndex = 9;
-            this.label6.Text = "Lab Name";
             // 
             // label7
             // 
@@ -293,13 +288,23 @@ namespace Breadboard
             this.textBox3.Size = new System.Drawing.Size(252, 20);
             this.textBox3.TabIndex = 12;
             // 
+            // label6
+            // 
+            this.label6.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(15, 7);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(56, 13);
+            this.label6.TabIndex = 9;
+            this.label6.Text = "Lab Name";
+            // 
             // Run
             // 
             this.Run.Controls.Add(this.button4);
             this.Run.Controls.Add(this.button1);
             this.Run.Controls.Add(this.label4);
             this.Run.Controls.Add(this.label5);
-            this.Run.Location = new System.Drawing.Point(13, 150);
+            this.Run.Location = new System.Drawing.Point(12, 181);
             this.Run.Name = "Run";
             this.Run.Size = new System.Drawing.Size(441, 77);
             this.Run.TabIndex = 16;
@@ -307,11 +312,29 @@ namespace Breadboard
             this.Run.Text = "Run";
             this.Run.Enter += new System.EventHandler(this.groupBox3_Enter);
             // 
+            // label8
+            // 
+            this.label8.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(18, 61);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(49, 13);
+            this.label8.TabIndex = 13;
+            this.label8.Text = "API URL";
+            this.label8.Click += new System.EventHandler(this.label8_Click);
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(89, 57);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(252, 20);
+            this.textBox4.TabIndex = 14;
+            // 
             // BreadboardMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(458, 451);
+            this.ClientSize = new System.Drawing.Size(463, 501);
             this.Controls.Add(this.Run);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label3);
@@ -360,6 +383,8 @@ namespace Breadboard
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.GroupBox Run;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox textBox4;
     }
 }
 
