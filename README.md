@@ -11,7 +11,7 @@ Ask me for prebuilt binaries or clone the repo and build it yourself (see below)
 
 Run `breadboard.exe`. You'll see:
 
-![startup](https://raw.githubusercontent.com/biswaroopmukherjee/breadboard-cicero/master/docs/breadboard-cicero-1-empty.PNG)
+![startup](docs/breadboard-cicero-1-empty.PNG)
 
 Fill in the settings. For the API token and URL, ask me. We usually store the snippet files in the server. The runlog files are near your Cicero installation.
 
