@@ -31,11 +31,11 @@ Open the solution in Visual studio (2017 or higher). Build for x86. Use the file
 
 ## FAQs:
 
-1. Can I run this without an internet connection?
+Q. Can I run this without an internet connection?
 
 A: Yes but your snippet files will be saved locally.
 
-2. How do I read the experimental parameters?
+Q. How do I read the experimental parameters?
 
-You can use the API, or read the snippet files. 
+A: You can use the API, or read the snippet files. 
 Use the matlab code [here](https://github.com/bec1/Data-Explorer-GUI/tree/master/Snippet-Functions), or the python code [coming soon]
