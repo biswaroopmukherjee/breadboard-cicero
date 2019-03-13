@@ -38,4 +38,4 @@ A: Yes but your snippet files will be saved locally.
 Q. How do I read the experimental parameters?
 
 A: You can use the API, or read the snippet files. 
-Use the matlab code [here](https://github.com/bec1/Data-Explorer-GUI/tree/master/Snippet-Functions), or the python code [coming soon]
+Use the matlab code [here](https://github.com/bec1/Data-Explorer-GUI/tree/master/Snippet-Functions), or the [python code](https://github.com/biswaroopmukherjee/breadboard-python-client).
