@@ -4,7 +4,7 @@ Save experimental parameters written by [Cicero](http://akeshet.github.io/Cicero
 
 ## How does it work?
 
-Reads runlog files. Writes snippet csv files as well as JSON run objects to a web API.
+Reads runlog files. Writes snippet csv files as well as JSON run objects to the [Breadboard web API](https://github.com/biswaroopmukherjee/breadboard).
 ## How can I use it?
 
 Ask me for prebuilt binaries or clone the repo and build it yourself (see below). This program must be run on the Cicero control computer.
